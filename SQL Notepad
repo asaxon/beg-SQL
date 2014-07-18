@@ -1,0 +1,316 @@
+/*
+
+Recording and working through:
+
+1) Design and Architecture of work DB
+2) SQL Server Central articles
+
+
+
+*/
+--5/23/2014
+SELECT * FROM SyModule nolock
+exec sproc_AlphayOmega 1--sp_helptext sproc_alphayomega
+
+-------------------------------------
+
+--5/28/2014
+SELECT * FROM syDictionary nolock
+exec sproc_adricDictionary 0 --sp_helptext sproc_adricDictionary
+
+-------------------------------------
+
+--5/30/2014
+--Messing around with cursor, because I saw it in Synch SyDictionary.sql code
+declare adric_cursor cursor
+	for select * from symodule
+open adric_cursor
+fetch next from adric_cursor
+close adric_cursor
+
+--------------------------------------
+
+
+--6/26/2014
+--What I wrote to identify all tables associated to SyStudent based on SyStudentID releationship...using SyDictionary table
+select	SD.tablename
+		,SD.syDictionaryID
+		,SD.ColumnName
+from SyDictionary SD
+	--inner join  on SD.sydictionaryid = Stud.systudentid
+where SD.columnname = 'SyStudentId'
+--I noticed that when running the script from 'Navigating CampusVue DB'...using sysobjects WAYYYY faster
+
+----------------------------------------
+
+
+--6/30/2014
+--Practice EXCEPT statement, which (when combined using PK between tables) can identify row differences between tables
+/*
+If we constrain the keys between the two sets to be equal, then any product from the EXCEPT statement will be rows where at least one of the other columns is different between them...basically, by joining the two datasets together by their keys, we no longer have the DATASET differences between them...but the ROW differences
+*/
+SELECT [S].[SyStudentID]
+      --, [S].[DateAdded]
+      --, [S].[DateLstMod]
+      --, [S].[TS]
+    FROM [SyStudent] [S]
+        INNER JOIN [AdEnroll] [T]
+        ON [S].[SyStudentID] = [T].[SyStudentID]
+EXCEPT
+SELECT [S].[SyStudentID]
+      --, [T].[DateAdded]
+      --, [T].[DateLstMod]
+      --, [T].[TS]
+    FROM [AdEnroll] [T]
+        INNER JOIN [SyStudent] [S]
+        ON [T].[SyStudentID] = [S].[SyStudentID];
+        
+-----------------------------------------------------
+
+-- 7/1/2014
+-- Format etiquette when asking for help
+/*
+ Yeah, this first part is all manual... but, it's worth it and it doesn't take any real time, at all. It does, however, do several very important things...
+
+    1. It very precisely identifies the data-types and that, alone, answers so many unnecessary questions.
+    2. It very precisely identifies constraints, conditions, and the Primary Key of the table so you don't have to write it out long-hand. Makes things crystal clear as to	what the table actually looks like because it's an actual table definition in code.
+    3. It will entice folks who might be able to help solve your problem into actually taking the time to solve your problem.
+*/
+--===== If the test able already exists, drop it
+	IF OBJECT_ID('TempDB..#tempAdric','U') IS NOT NULL
+		DROP TABLE #tempAdric
+		
+--===== Create the test table with
+CREATE TABLE #tempAdric
+		(
+		ID INT IDENTITY(1,1) PRIMARY KEY CLUSTERED, --Is an IDENTITY column on real table
+		DateValue DATETIME,
+		Value MONEY,
+		YearValue INT,
+		MonthValue INT
+		)
+		
+--===== Setup any special required conditions especially where dates are concerned
+	SET DATEFORMAT DMY
+--** SET statement has been included as a "special condition" so the potential respondent to your problem doesn't even have to think about it when it comes time to		loading your data. 
+	
+--===== Create some data
+
+--===== All Inserts into the IDENTITY column
+	SET IDENTITY_INSERT #tempAdric ON
+	
+--===== Insert the test data into the test table
+INSERT INTO #tempAdric
+		(ID,DateValue,Value,YearValue,MonthValue)
+ SELECT '4','Oct 17 2007 12:00AM','5.1709','8','1' UNION ALL
+ SELECT '37','Oct 17 2007 12:00AM','5.5319','17','8' UNION ALL
+ SELECT '44','Oct 17 2007 12:00AM','5.5793','21','11' UNION ALL
+ SELECT '54','Oct 17 2007 12:00AM','5.2471','9','2' UNION ALL
+ SELECT '55','Oct 17 2007 12:00AM','5.1177','7','0' UNION ALL
+ SELECT '81','Oct 17 2007 12:00AM','5.5510','18','9' UNION ALL
+ SELECT '86','Oct 17 2007 12:00AM','5.5128','16','7' UNION ALL
+ SELECT '96','Oct 17 2007 12:00AM','5.5758','20','10'
+
+--===== Set the identity insert back to normal
+    SET IDENTITY_INSERT #tempAdric OFF
+    
+SELECT 'SELECT '
+	+ QUOTENAME(ID,'''')+','
+	+ QUOTENAME(DateValue,'''')+','
+	+ CAST(Value AS VARCHAR)+','
+	+ QUOTENAME(YearValue,'''')+','
+	+ QUOTENAME(MonthValue,'''')
+	+ ' UNION ALL'
+FROM #tempAdric
+
+----------------------------------------
+
+-- 7/3/2014
+-- EXCEPT = used to compare the differences between two sets of data.
+--		**As long as # of columns are same, order, data types, and nullability, it quickly returns all rows from 1st set of data that don't lie within 2nd
+
+--Common Example
+--Returns all rows from [table1] that do not have exact match in [table2]
+/*
+SELECT t1.ID
+		,t1.Col1
+		,t1.Col2
+	FROM table1 t1
+EXCEPT
+SELECT t2.ID
+		,t2.Col1
+		,t2.Col2
+	FROM table2 t2
+*/	
+	--**EXCEPT treats null values as equal to each other. Typically this isn't the case, and means that they must be handled with special logic on column-by-column
+	--basis to perform a comparison and can impose logic issues when handled inadequately
+	
+--Comparing Row Differences
+--EXCEPT is cool, means I don't have to specify comparison for each column, handles null values well and, as long as it rules are met, there is nothing complicated that will --yeild unexpected results. A slight change though, and we can leverage the statement for greater use.
+
+--If we constrain the keys between the two sets to be equal, then any product from the EXCEPT statement will be rows where at least one of the other columns is different between them...
+--...basically, by joining the two datasets together by their keys, we no longer have the DATASET differences between them...but the ROW differences
+
+--This will cause EXCEPT statement to compare each equivalent row between the two sets
+/*
+SELECT t1.ID
+		,t1.Col1
+		,t1.Col2
+	FROM table1 t1
+		INNER JOIN table2 t2
+		ON t1.ID = t2.ID
+EXCEPT
+SELECT t2.ID
+		,t2.Col1
+		,t2.Col2
+	FROM table2 t2
+		INNER JOIN table1 t1
+			ON t2.ID = t1.ID
+*/	
+--Demonstration of EXCEPT
+
+--create two temp tables, #Source & #Target, with identical column definitions (the noted difference of an identifty attribute on the source table's PK)
+/*
+CREATE TABLE [#Source]
+	(
+		[ID] INT NOT NULL
+				PRIMARY KEY
+				IDENTITY (1,1)
+	,	[Item]	VARCHAR(100)	NOT NULL
+								UNIQUE
+	,	[Price]	MONEY			NOT NULL
+	,	[OrderDate]	DATE		NOT NULL
+	,	[Units]	NUMERIC(10,4)	NULL
+	,	[ShipmentDate]	DATE	NULL
+	)
+
+CREATE TABLE [#Target]
+	(
+		[ID] INT NOT NULL
+				PRIMARY KEY
+	,	[Item]	VARCHAR(100)	NOT NULL
+								UNIQUE
+	,	[Price]	MONEY			NOT NULL
+	,	[OrderDate]	DATE		NOT NULL
+	,	[Units]	NUMERIC(10,4)	NULL
+	,	[ShipmentDate]	DATE	NULL
+	)
+*/
+--Insert initial values into #Source, then duplicate the data will bulk-copy to #Target (will give us equivalent datasets)
+/*
+INSERT INTO [#Source]
+		(	[Item], [Price], [OrderDate], [Units], [ShipmentDate] )
+	VALUES	( 'Apple', 2.49, '1/1/2001', NULL, '1/02/2001' )
+,			( 'Coconut', 0.99, '3/3/2003', NULL, '3/4/2003' )
+,			( 'Eggplant', 1.19, '5/5/2005', NULL, '5/6/2005' )
+,			( 'Fig', 0.49, '6/6/2006', NULL, '6/7/2006' )
+,			( 'Kiwi', 0.69, '11/11/2011', NULL, '11/12/2011' )
+,			( 'Lychee', 0.29, '12/12/2012', NULL, '12/14/2012' )
+
+INSERT INTO [#Target]
+		(	[ID]
+		,	[Item]
+		,	[Price]
+		,	[OrderDate]
+		,	[Units]
+		,	[ShipmentDate]
+		)
+		SELECT S.ID
+				,	S.Item
+				,	S.Price
+				,	S.OrderDate
+				,	S.Units
+				,	S.ShipmentDate
+			FROM #Source S
+*/			
+
+--Run query at this point, nothing is returned, as both tables have identical data values
+/*
+SELECT [S].[ID]
+      , [S].[Item]
+      , [S].[Price]
+      , [S].[OrderDate]
+      , [S].[Units]
+      , [S].[ShipmentDate]
+    FROM [#Source] [S]
+        INNER JOIN [#Target] [T]
+        ON [S].[ID] = [T].[ID]
+EXCEPT
+SELECT [T].[ID]
+      , [T].[Item]
+      , [T].[Price]
+      , [T].[OrderDate]
+      , [T].[Units]
+      , [T].[ShipmentDate]
+    FROM [#Target] [T]
+        INNER JOIN [#Source] [S]
+        ON [T].[ID] = [S].[ID]
+*/
+--So run some updates against #Source to mimic production changes that might occur and would require detection so they could be applied to #Target table.
+--Test: (1)set value to NULL, (2)modding a value to another value, (3)and setting NULL value to a value
+/*
+UPDATE #Source
+	SET	ShipmentDate = NULL--was 3/4/2003
+	WHERE	Item = 'Coconut'
+	
+UPDATE #Source
+	SET	Price = 22.44--was 1.19
+	WHERE	Item = 'Eggplant'
+	
+UPDATE #Source
+	SET	Units = 1000.55--was NULL
+	WHERE	Item = 'Lychee'
+*/
+--Run EXCEPT again..now it produces three rows that we made changes to
+SELECT [S].[ID]
+      , [S].[Item]
+      , [S].[Price]
+      , [S].[OrderDate]
+      , [S].[Units]
+      , [S].[ShipmentDate]
+    FROM [#Source] [S]
+        INNER JOIN [#Target] [T]
+        ON [S].[ID] = [T].[ID]
+EXCEPT
+SELECT [T].[ID]
+      , [T].[Item]
+      , [T].[Price]
+      , [T].[OrderDate]
+      , [T].[Units]
+      , [T].[ShipmentDate]
+    FROM [#Target] [T]
+        INNER JOIN [#Source] [S]
+        ON [T].[ID] = [S].[ID];
+        
+--Conclusion
+/*
+By joining two datasets together by their common keys, we:
+(1) cause the EXCEPT statement to compare remaining columns
+(2) This approach to check row differences can reduce errors by:
+	a. removing the tedious hand-coding of column-by-column comparisons
+	b. as well as required null-handling logic
+*/
+
+-------------------------------------
+
+-- 7/9/2014
+-- CONCATENATE SHORTCUT
+-- Coding Shortcuts using += and -= Operators
+
+--String Concatenate operator REQUIRES that variables [@String] be specified on left side of operator
+--Concatenate with Shortcut
+DECLARE @String varchar(100);
+SET @String = 'Greg';
+SET @String += ' Larsen';
+SELECT @String;
+GO
+
+--Concatenate without Shortcut
+DECLARE @String varchar(100);
+SET @String = 'Greg';
+SET @String = @String + ' Larsen';
+SELECT @String;
+GO
+
+--Incorrect
+--SELECT 'Greg' += ' Larsen';
