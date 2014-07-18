@@ -1,1 +1,288 @@
-Place holder for complex update using temp tables, variables, objects, select statements, update bits
+/*Place holder for complex update using temp tables, variables, objects, select statements, update bits*/
+
+
+/*--
+FileName:	FaSched_Date_Move_Case1222600_PELL.sql
+Author	:	Adric Saxon
+Date	:	7/11/2014
+PBI 	:	
+Purpose	:	
+			
+Dates to change:
+*	7/21/14 to 7/23/14
+*	10/13/14 to 10/15/14
+*	1/12/15 to 1/14/15
+*	4/6/15 to 4/8/15
+
+Fund Sources to update:
+
+*	PELL - Pell Grant - LIVE count 175, 200, 190, 31
+
+
+
+*/
+
+--===== Setup special required condition for dates
+
+		--SET DATEFORMAT DMY
+
+--===== Set @GO = 1, and adjustments will be made
+--/*
+DECLARE @GO BIT SET @GO = 0
+	
+BEGIN
+	BEGIN try
+	
+	set nocount on
+	
+	declare @ScriptName sysname
+	set @ScriptName = 'FaSched_Date_Move_Case1222600_PELL.sql'
+	
+--===== Drop temp tables if already exist
+
+	if OBJECT_ID('tempdb..#JULY') is not null		 
+		drop table #JULY
+
+	if OBJECT_ID('tempdb..#OCT') is not null		 
+		drop table #OCT
+
+	if OBJECT_ID('tempdb..#JAN') is not null		 
+		drop table #JAN
+
+	if OBJECT_ID('tempdb..#APRIL') is not null		 
+		drop table #APRIL
+
+	ELSE
+	BEGIN 		
+--===== Id info to adjust 
+--===== PELL 7/21/14 to 7/23/14
+
+		SELECT 
+			--'SELECT ' 
+			--count(a.FaSchedID)
+			a.faschedid
+			--,	QUOTENAME(a.FaSchedID,'') + ','
+			--,	a.*
+				--+ ' UNION ALL'
+		INTO #JULY
+		FROM FaSched a
+			inner join fastudentaid c on c.fastudentaidid = a.fastudentaidid
+			INNER JOIN FaStudentPell b on b.Fastudentpellid = c.fastudentpellid
+		WHERE b.OriginationStatus <> 'A'
+			AND a.[Status] = 'S'
+			AND -- Need to convert or else get this message: Msg 242, Level 16, State 3, Line 39
+				-- "The conversion of a varchar data type to a datetime data type resulted in an out-of-range value."
+				CONVERT(nvarchar(20),cast(DateSched as datetime),101) = '07/21/2014'
+				
+--===== PELL 10/13/14 to 10/15/14
+
+		SELECT 
+			--'SELECT ' 
+			--count(a.FaSchedID)
+			a.faschedid
+			--,	QUOTENAME(a.FaSchedID,'') + ','
+			--,	a.*
+				--+ ' UNION ALL'
+		INTO #OCT
+		FROM FaSched a
+			inner join fastudentaid c on c.fastudentaidid = a.fastudentaidid
+			INNER JOIN FaStudentPell b on b.Fastudentpellid = c.fastudentpellid
+		WHERE b.OriginationStatus <> 'A'
+			AND a.[Status] = 'S'
+			AND -- Need to convert or else get this message: Msg 242, Level 16, State 3, Line 39
+				-- "The conversion of a varchar data type to a datetime data type resulted in an out-of-range value."
+				CONVERT(nvarchar(20),cast(DateSched as datetime),101) = '10/13/2014'
+
+--===== PELL 1/12/15 to 1/14/15
+
+		SELECT 
+			--'SELECT ' 
+			--count(a.faschedid)
+			a.faschedid
+			--,	QUOTENAME(a.FaSchedID,'') + ','
+			--,	a.*
+				--+ ' UNION ALL'
+		INTO #JAN
+		FROM FaSched a
+			inner join fastudentaid c on c.fastudentaidid = a.fastudentaidid
+			INNER JOIN FaStudentPell b on b.Fastudentpellid = c.fastudentpellid
+		WHERE b.OriginationStatus <> 'A'
+			AND a.[Status] = 'S'
+			AND -- Need to convert or else get this message: Msg 242, Level 16, State 3, Line 39
+				-- "The conversion of a varchar data type to a datetime data type resulted in an out-of-range value."
+				CONVERT(nvarchar(20),cast(DateSched as datetime),101) = '01/12/2015'
+
+--===== PELL 4/6/15 TO 4/8/15			
+	
+		SELECT 
+			--'SELECT ' 
+			--count(a.faschedid) 
+			a.faschedid
+			--,	QUOTENAME(a.FaSchedID,'') + ','
+			--,	a.*
+				--+ ' UNION ALL'
+		INTO #APRIL
+		FROM FaSched a
+			inner join fastudentaid c on c.fastudentaidid = a.fastudentaidid
+			INNER JOIN FaStudentPell b on b.Fastudentpellid = c.fastudentpellid
+		WHERE b.OriginationStatus <> 'A'
+			AND a.[Status] = 'S'
+			AND -- Need to convert or else get this message: Msg 242, Level 16, State 3, Line 39
+				-- "The conversion of a varchar data type to a datetime data type resulted in an out-of-range value."
+				CONVERT(nvarchar(20),cast(DateSched as datetime),101) = '04/06/2015'
+
+	IF @GO = 0
+		BEGIN
+			SELECT count(faschedid) from #JULY
+			SELECT count(faschedid)  from  #OCT
+			SELECT count(faschedid)  from  #JAN
+			SELECT count(faschedid)  from  #APRIL
+		END
+	
+	ELSE
+	--Actual Adjust, set 7/21/2014 = 7/23/2014
+	BEGIN
+			--create back up of affected tables
+			if (not exists(select 1 from sys.tables (nolock) where Name = 'FaSched_Case#1222600_PELL_July'))
+			begin
+				select * into FaSched_Case#1222600_PELL_July from #JULY
+			end
+				if (not exists(select 1 from sys.tables (nolock) where Name = 'FaSched_Case#1222600_PELL_OCT'))
+				begin
+					select * into FaSched_Case#1222600_PELL_OCT from #OCT
+				end
+					if (not exists(select 1 from sys.tables (nolock) where Name = 'FaSched_Case#1222600_PELL_JAN'))
+					begin
+						select * into FaSched_Case#1222600_PELL_JAN from #JAN
+					end
+						if (not exists(select 1 from sys.tables (nolock) where Name = 'FaSched_Case#1222600_PELL_APRIL'))
+						begin
+							select * into FaSched_Case#1222600_PELL_APRIL from #APRIL
+						end
+						
+		BEGIN TRANSACTION
+	--Actual Adjust, set 7/21/2014 = 7/23/2014
+			UPDATE FaSched
+					SET FaSched.DateSched = '2014-07-23 00:00:00.000'
+						WHERE FaSched.FaSchedID in
+							(
+								SELECT FaSchedID from #JULY
+							)
+	--Actual Adjust, set 10/13/2014 = 10/15/2014
+			UPDATE FaSched
+					SET FaSched.DateSched = '2014-10-15 00:00:00.000'
+						WHERE FaSched.FaSchedID in
+							(
+								SELECT FaSchedID from #OCT
+							)
+	--Actual Adjust, set 1/12/2015 = 1/14/2015 
+			UPDATE FaSched
+				SET FaSched.DateSched = '2015-01-14 00:00:00.000'
+					WHERE FaSched.FaSchedID in
+							(
+								SELECT FaSchedID from #JAN
+							)
+	--Actual Adjust, set 4/6/2015 = 4/8/2015 
+			UPDATE FaSched
+					SET FaSched.DateSched = '2015-04-08 00:00:00.000'
+					WHERE FaSched.FaSchedID in
+							(
+								SELECT FaSchedID from #APRIL
+							)
+							
+		Print 'Info adjusted without issue.'
+	
+		COMMIT TRANSACTION
+		
+		END
+	END
+	
+END	try	
+	
+BEGIN catch
+	if(@@trancount <> 0) rollback transaction
+	
+	declare @ErrorMsg varchar(max)
+	set @ErrorMsg = 'DML: ' + @ScriptName + ' run failed.' + Char(13) + Char(9) + 'Error Number: ' + Convert(varchar(10), ERROR_NUMBER()) + '; Description: ' + ERROR_MESSAGE()
+	Raiserror(@ErrorMsg, 16, 1);
+end catch
+
+END
+/*
+
+
+
+		SELECT 
+			--'SELECT ' 
+			count(a.faschedid)
+			--a.faschedid
+			--,	QUOTENAME(a.FaSchedID,'') + ','
+			--,	a.*
+				--+ ' UNION ALL'
+		
+		FROM FaSched a
+			inner join fastudentaid c on c.fastudentaidid = a.fastudentaidid
+			INNER JOIN FaStudentPell b on b.Fastudentpellid = c.fastudentpellid
+		WHERE b.OriginationStatus <> 'A'
+			AND a.[Status] = 'S'
+			AND -- Need to convert or else get this message: Msg 242, Level 16, State 3, Line 39
+				-- "The conversion of a varchar data type to a datetime data type resulted in an out-of-range value."
+				CONVERT(nvarchar(20),cast(DateSched as datetime),101) = '07/21/2014'
+				
+--===== PELL 10/13/14 to 10/15/14
+
+		SELECT 
+			--'SELECT ' 
+			count(a.faschedid)
+			--a.faschedid
+			--,	QUOTENAME(a.FaSchedID,'') + ','
+			--,	a.*
+				--+ ' UNION ALL'
+		
+		FROM FaSched a
+			inner join fastudentaid c on c.fastudentaidid = a.fastudentaidid
+			INNER JOIN FaStudentPell b on b.Fastudentpellid = c.fastudentpellid
+		WHERE b.OriginationStatus <> 'A'
+			AND a.[Status] = 'S'
+			AND -- Need to convert or else get this message: Msg 242, Level 16, State 3, Line 39
+				-- "The conversion of a varchar data type to a datetime data type resulted in an out-of-range value."
+				CONVERT(nvarchar(20),cast(DateSched as datetime),101) = '10/13/2014'
+
+--===== PELL 1/12/15 to 1/14/15
+
+		SELECT 
+			--'SELECT ' 
+			count(a.faschedid)
+			--a.faschedid
+			--,	QUOTENAME(a.FaSchedID,'') + ','
+			--,	a.*
+				--+ ' UNION ALL'
+		
+		FROM FaSched a
+			inner join fastudentaid c on c.fastudentaidid = a.fastudentaidid
+			INNER JOIN FaStudentPell b on b.Fastudentpellid = c.fastudentpellid
+		WHERE b.OriginationStatus <> 'A'
+			AND a.[Status] = 'S'
+			AND -- Need to convert or else get this message: Msg 242, Level 16, State 3, Line 39
+				-- "The conversion of a varchar data type to a datetime data type resulted in an out-of-range value."
+				CONVERT(nvarchar(20),cast(DateSched as datetime),101) = '01/12/2015'
+
+--===== PELL 4/6/15 TO 4/8/15			
+	
+		SELECT 
+			--'SELECT ' 
+			count(a.faschedid) 
+			--a.faschedid
+			--,	QUOTENAME(a.FaSchedID,'') + ','
+			--,	a.*
+				--+ ' UNION ALL'
+		
+		FROM FaSched a
+			inner join fastudentaid c on c.fastudentaidid = a.fastudentaidid
+			INNER JOIN FaStudentPell b on b.Fastudentpellid = c.fastudentpellid
+		WHERE b.OriginationStatus <> 'A'
+			AND a.[Status] = 'S'
+			AND -- Need to convert or else get this message: Msg 242, Level 16, State 3, Line 39
+				-- "The conversion of a varchar data type to a datetime data type resulted in an out-of-range value."
+				CONVERT(nvarchar(20),cast(DateSched as datetime),101) = '04/06/2015'
+*/				
