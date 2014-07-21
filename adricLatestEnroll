@@ -1,0 +1,82 @@
+
+
+/*
+FileName:	adricLatestEnroll.sql
+Author	:	Adric Saxon
+Date	:	7/21/2014
+
+Purpose	:	Find Latest student enrollment using MAX, and some CASE selects too
+			
+History	:	
+		
+
+*/	
+
+--===== Declare the Student # we are looking for, and the studentAdricID too
+
+		declare @stunum varchar(15)
+		set @stunum = '<enter stu num here>'
+
+		declare @systud int
+		select @systud = studentAdricid from studentAdric where stunum = @stunum
+
+--===== Select into #Adric table
+		select 
+			--enrollAdric.enrollAdricid as 'enrollAdric.enrollAdricID'																
+			--,studentayAdric.studentayAdricid as 'studentayAdric.FaStudentyAYID'
+			--,schoolStatusAdric.Code
+			--,schoolStatusAdric.schoolStatusAdricID
+			enrollAdric.programdescripAdric as 'enrollAdric.programdescripAdric'
+			--,studentAdric.studentAdricid as 'studentAdric.studentAdricID'
+			--,studentAdric.FirstName as 'studentAdric.Firstname'
+			--,studentAdric.LastName as 'studentAdric.Lastname'
+			--, studentAdric.SSN as 'studentAdric.SSN'
+			,studentAdric.StuNum as 'studentAdric.Stunum'
+			,enrollAdricsched.EnrollStatusCredits
+			,enrollAdricsched.EnrollStatusHours
+			,enrollAdricsched.HoursAttempt
+			,enrollAdricsched.HoursEarned
+			,[Course Status] =(case 
+					when enrollAdricsched.[Status] = 'P' then 'Complete'
+					when enrollAdricsched.[Status] = 'D' then 'Dropped'
+					when enrollAdricsched.[Status] = 'S' then 'Scheduled'
+					else 'N/A'
+				end
+				)
+			,enrollAdricsched.Descrip
+			,enrollAdricsched.StartDate
+			,enrollAdricsched.EndDate
+			,enrollAdricsched.ExpectedEndDate
+			,enrollAdricsched.LDA
+			,enrollAdricsched.DateGradePosted
+			,enrollAdricsched.DropDate
+			,enrollAdricsched.Credits
+			,enrollAdricsched.Hours
+			,enrollAdricsched.NumericGrade
+			,enrollAdricsched.GradeLetterCode
+			,enrollAdricsched.Points
+			,enrollAdricsched.QualityPoints
+			,enrollAdricsched.CreditsAttempt
+			,enrollAdricsched.CreditsEarned
+			,enrollAdricsched.enrollAdricSchedID
+			,enrollAdricsched.ProgramCourseID
+			,enrollAdricsched.studentayAdricPaymentPeriodId
+		from studentAdric (nolock)
+				inner join enrollAdric (nolock) on studentAdric.studentAdricId = enrollAdric.studentAdricid 
+				inner join studentayAdric (nolock) on enrollAdric.enrollAdricID = studentayAdric.enrollAdricID
+				inner join schoolStatusAdric (nolock) on schoolStatusAdric.schoolStatusAdricID = enrollAdric.schoolStatusAdricID
+				inner join programAdric (nolock) on programAdric.programAdricID = enrollAdric.programAdricID
+				--inner join programAdricversion (nolock) on programAdricversion.programAdricID = programAdric.programAdricID
+				--inner join classSchedAdric on classSchedAdric.classSchedAdricID = enrollAdric.enrollAdricID
+				inner join enrollAdricSched on enrollAdricsched.enrollAdricID = enrollAdric.enrollAdricID
+				--inner join ADCourse (nolock) on adcourse.AdCourseID = enrollAdricSched.AdCourseID
+				--===== I want to only see the data for the student's latest enrollment, so I'll use MAX here to find the biggest ID value for student
+				,(select [latestID]=MAX(enrollAdric.enrollAdricid)
+									from enrollAdric
+										where studentAdricID in (
+																select studentAdricID
+																	from studentAdric
+																		where StuNum = @stunum)
+																) latestEnroll
+		where studentAdric.StuNum = @stunum
+		and enrollAdric.enrollAdricID = latestEnroll.latestID
