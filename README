@@ -2,4 +2,10 @@ SQL - beg-SQL
 
 Files here:
 
+1) SQL Notepad - Chronological timeline of T-SQL Musings
+
+2) adricLatestEnroll - (Select statement using MAX,CASE)
+
+3) complexUpdatev1 - (Update statement using BEGIN TRY,CATCH, OBJECT_ID,DROP Temp TABLE, Variable @Bit to test)
+
 
