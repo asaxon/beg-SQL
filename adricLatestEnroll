@@ -27,6 +27,8 @@ History	:
 			--,schoolStatusAdric.Code
 			--,schoolStatusAdric.schoolStatusAdricID
 			enrollAdric.programdescripAdric as 'enrollAdric.programdescripAdric'
+			,attstatAdric.Code as 'EnrollStatusCode'
+			,attstatAdric.Descrip as 'EnrollStatusDescrip'
 			--,studentAdric.studentAdricid as 'studentAdric.studentAdricID'
 			--,studentAdric.FirstName as 'studentAdric.Firstname'
 			--,studentAdric.LastName as 'studentAdric.Lastname'
