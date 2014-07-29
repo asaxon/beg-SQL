@@ -1,0 +1,87 @@
+/*
+FileName:	sproc_gatherAUTOMATEDinfo.sql
+Author	:	Adric Saxon
+Date	:	7/29/2014
+PBI 	:	
+Purpose	:	Gathers and presents all import FAA info quickly for analyst troubleshooting issues
+			
+History	:
+
+
+---------------
+Example use:
+
+--exec sproc_gatherAUTOMATEDinfo 'FA'
+
+
+--Syntax
+sp_executesql [ @statement = ] statement
+[ 
+  { , [ @params = ] N'@parameter_name data_type [ OUT | OUTPUT ][ ,...n ]' } 
+     { , [ @param1 = ] 'value1' [ ,...n ] }
+]
+
+*/
+--select object_ID ( 'sproc_gatherAUTOMATEDinfo' )
+USE C2000_Train--I need to make this dynamic, so that analyst can just input which DB to use
+GO
+IF OBJECT_ID ( 'sproc_gatherAUTOMATEDinfo', 'P' ) IS NOT NULL
+	DROP PROCEDURE sproc_gatherAUTOMATEDinfo;
+GO
+CREATE PROCEDURE sproc_gatherAUTOMATEDinfo
+	--@DB varchar (20) --So users can input whichever database they need to query
+	@Module char (2)--Building in filter for different modules
+	,@Descrip nvarchar (50) = N'%'--Filter for description, sproc pattern matches the parameters passed or, if not supplied, will use default
+	--,@Active bit 
+	--,@IsAutomationEnabled bit 
+AS
+	SET NOCOUNT ON;
+	--===== Used while testing SELECT statement build
+	/*
+		declare @Module char (2) = 'FA'--Building in filter for different modules
+		declare @Descrip nvarchar (50) = N'%'--Filter for description, sproc pattern matches the parameters passed or, if not supplied, will use default
+	*/
+	
+BEGIN
+
+IF @MODULE = 'FA'
+	
+	SELECT  
+			sysp.adricProcessID
+			,[adric Type Code & Description]=RTRIM(sytype.Code) + ' - ' + sytype.Descrip
+			,[adric Code]=sysp.Code
+			,[adric Active?]=(case
+									when sysp.Active = 1 then 'Yes'
+									when sysp.Active = 0 then 'No'
+									else 'N/A'
+								end
+								)								
+			--,sysp.UserID,sysp.DateAdded,sysp.DateLstMod,sysp.ts,sysp.ProcessInfoType
+			,[Exceptions Managed?]=(case
+									when sysp.IsExceptionMgmtReady = 1 then 'Yes'
+									when sysp.IsExceptionMgmtReady = 0 then 'No'
+									else 'N/A'
+								end
+								)	
+			,[Automation On?]=(case
+									when sysp.IsAutomationEnabled = 1 then 'Yes'
+									when sysp.IsAutomationEnabled = 0 then 'No'
+									else 'N/A'
+								end
+								)	
+			,[Web adric End]=sysp.WebadricEndPoint
+	FROM adricProcess sysp
+		INNER JOIN adricProcessType sytype (NOLOCK) on sytype.adricProcessTypeID = sysp.adricProcessTypeID
+		--INNER JOIN adricProcessSubscription psub (NOLOCK) on psub.adricProcessID = sysp.adricProcessID
+	WHERE sysp.Module = 'FA'
+		AND sysp.[Descrip] LIKE @Descrip
+		AND sysp.Active = 1 --Filter for active AUTO adrics
+		AND sysp.IsAutomationEnabled = 1 --Filter for AUTO adrics are enabled (different from whether it's active or not)
+	ORDER BY sytype.Code
+	
+ELSE
+
+PRINT 'NADA'
+
+END
+GO
