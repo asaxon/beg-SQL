@@ -1,0 +1,46 @@
+/*
+FileName:	simpleUpdatePreventMistakes
+Author	:	Adric Saxon
+Date	:	7/30/2014
+PBI 	:	
+Purpose	:	Simple update statement for status updates that are often run to match COD info.
+			Run with commit commented out, and it shows:
+				
+				1. Before script applied
+				2. After script applied
+				
+			But doesn't apply changes, just rolls back. That way, I verify which data actually being affected to prevent mistakes.
+History	:
+
+
+---------------
+
+Begin
+--There are only two results running without MAX or MIN so i'm using them here to seperate the variable declares
+declare @disbid int set @disbid = (select MAX(a.adricdldisbid) from adricdldisb a inner join adricaid b on b.adricaidid = a.adricaidid 
+
+inner join systudent c on c.systudentid = b.systudentid inner join sycampus d on d.sycampusid = c.sycampusid where a.disbstatus = 'E' and 
+
+a.disbnum = 3and a.exportbatchid > '2014-07-01'and c.stunum = '1380858')
+
+declare @disbid2 int set @disbid2 = (select MIN(a.adricdldisbid) from adricdldisb a inner join adricaid b on b.adricaidid = a.adricaidid 
+
+inner join systudent c on c.systudentid = b.systudentid inner join sycampus d on d.sycampusid = c.sycampusid where a.disbstatus = 'E' and 
+
+a.disbnum = 3and a.exportbatchid > '2014-07-01'and c.stunum = '1380858')
+
+--
+select [Status Before] = disbstatus,* from adricdldisb where adricdldisbid in (@disbid,@disbid2)
+
+
+	begin tran
+
+		update adricdldisb
+		set disbstatus = 'A'
+		where adricdldisbid in (@disbid,@disbid2)
+	end
+	
+select [Status After] = disbstatus,* from adricdldisb where adricdldisbid in (@disbid,@disbid2)
+
+rollback
+--commit
