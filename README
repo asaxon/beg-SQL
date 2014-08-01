@@ -6,6 +6,11 @@ Files here:
 
 2) adricLatestEnroll - (Select statement using MAX,CASE)
 
-3) complexUpdatev1 - (Update statement using BEGIN TRY,CATCH, OBJECT_ID,DROP Temp TABLE, Variable @Bit to test)
+3) adricUpdateErrorCatch - (T-SQL batch returns results when bit = 0, commits change when bit = 1, uses BEGIN TRY, ERROR catch)
 
+4) complexUpdatev1 - (Update statement using BEGIN TRY,CATCH, OBJECT_ID,DROP Temp TABLE, Variable @Bit to test)
+
+5) simpleDeclareUpdatePreventMistakes - (Practicing different style for updating, will show before change / after change, and rollsback data before I must manually uncomment COMMIT)
+
+6) sproc_gatherAUTOMATEDinfo - (Created stored procedure to quickly gather and present VIP data for troubleshooting)
 
