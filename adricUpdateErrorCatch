@@ -1,0 +1,119 @@
+/*
+FileName:	adricUpdateErrorCatch.sql
+Author	:	Adric Saxon
+Date	:	7/31/2014
+PBI 	:	
+Purpose	:	Updating information when bit = 1, when = 0, just returns info that will be affected. Practicing use of Begin try, and error 
+
+catch statement too.
+			
+History	:
+
+
+---------------
+declare @run bit = 0
+BEGIN
+	BEGIN try
+	
+	set nocount on
+	
+	declare @ScriptName sysname
+	set @ScriptName = 'updateDisbAtCOD'
+	
+	if @run = 0
+	begin
+
+	
+
+						--Disbursements and their comments
+						select a.exportbatchid,a.disbnum,a.transactiondate,a.
+						
+
+[disbstatus],a.commentcodes,e.comment,d.pellid,d.rptrfmspellid,d.attrfmspellid,d.dloanid,d.pellidbranch
+					
+
+	,d.* from adricdldisb a
+						inner join adricaid b on b.adricaidid = a.adricaidid
+						inner join adricstud c on c.adricstudid = b.adricstudid
+						inner join adriccamp d on d.adriccampid = c.adriccampid
+						inner join adricsys e on e.code = a.commentcodes
+						where a.disbstatus = 'E' 
+						and a.commentcodes = '996'
+						--and a.exportbatchid = '2014-07-30T09:19:33.6031167339'
+
+						--Pell Disbursements
+						select a.exportbatchid,a.disbnum,a.
+						
+
+[disbstatus],a.commentcodes,e.comment,d.pellid,d.rptrfmspellid,d.attrfmspellid,d.dloanid,d.pellidbranch
+					
+
+	,d.* from adricpelldisb a
+						inner join adricaid b on b.adricaidid = a.adricaidid
+						inner join adricstud c on c.adricstudid = b.adricstudid
+						inner join adriccamp d on d.adriccampid = c.adriccampid
+						inner join adricsys e on e.code = a.commentcodes
+						where a.disbstatus = 'E' 
+						and a.commentcodes = '996'
+
+				end
+				else
+				
+				  begin
+					begin transaction
+	
+						update adricdldisb
+						set disbstatus = 'R'
+						where adricdldisbid in (
+											--Disbursements and their comments
+											select distinct a.adricdldisbid from adricdldisb a
+											inner join adricaid b on b.adricaidid = 
+
+a.adricaidid
+											inner join adricstud c on c.adricstudid = 
+
+b.adricstudid
+											inner join adriccamp d on d.adriccampid = c.adriccampid
+											inner join adricsys e on e.code = 
+
+a.commentcodes
+											where a.disbstatus = 'E' 
+											and a.commentcodes = '996'
+											--and a.exportbatchid = '2014-07-
+
+30T09:19:33.6031167339'
+											)
+						update adricpelldisb
+						set disbstatus = 'R'
+						where adricpelldisbid in (
+											--Pell Disbursements
+											select distinct a.adricpelldisbid from adricpelldisb a
+											inner join adricaid b on b.adricaidid = 
+
+a.adricaidid
+											inner join adricstud c on c.adricstudid = 
+
+b.adricstudid
+											inner join adriccamp d on d.adriccampid = c.adriccampid
+											inner join adricsys e on e.code = 
+
+a.commentcodes
+											where a.disbstatus = 'E' 
+											and a.commentcodes = '996'
+											)
+						commit transaction
+					end --tran
+			
+END	try	
+	
+BEGIN catch
+	if(@@trancount <> 0) rollback transaction
+	
+	declare @ErrorMsg varchar(max)
+	set @ErrorMsg = 'DML: ' + @ScriptName + ' run failed.' + Char(13) + Char(9) + 'Error Number: ' + Convert(varchar(10), ERROR_NUMBER()) 
+
++ '; Description: ' + ERROR_MESSAGE()
+	Raiserror(@ErrorMsg, 16, 1);
+end catch
+
+END
