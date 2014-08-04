@@ -1,0 +1,101 @@
+/*
+FileName:	adricInsertUsingGUI
+
+Author	:	Adric Saxon
+Date	:	8/4/2014
+
+Purpose	:	Created using SSMS GUI to script INTO while I worked to reproduce an issue.
+			Just showing I'm comfortable, and can use, the GUI in Sql server for simple actions.
+			Column names may be a bit funny, I washed them to protect data.
+			
+History	:	
+		
+
+*/
+INSERT INTO [AdventureWorks2008R2].[dbo].[adricnot]
+           ([adricbonesax]
+           ,[adricstudentasaxsax]
+           ,[satranssax]
+           ,[adricrefundsax]
+           ,[notnum]
+           ,[nottype]
+           ,[transactiondate]
+           ,[notsequencenum]
+           ,[notgrossminus]
+           ,[notfeeminus]
+           ,[notnetminus]
+           ,[notnetadjust]
+           ,[orignotdate]
+           ,[boatbatchsax]
+           ,[boatdate]
+           ,[acknowledgedate]
+           ,[notsanta]
+           ,[schoolcodesanta]
+           ,[bonesaxsanta]
+           ,[notnumsanta]
+           ,[notactivitycodes]
+           ,[transaatesanta]
+           ,[sequencenumsanta]
+           ,[farnotgrossminus]
+           ,[farnotfeeminus]
+           ,[farnotnetminus]
+           ,[farnetadjust]
+           ,[booksanta]
+           ,[fartotalnetminus]
+           ,[affirmationflag]
+           ,[bonedetailbatchsax]
+           ,[usersax]
+           ,[dateminused]
+           ,[datelstmod]
+           ,[BookDate]
+           ,[notRebateminus]
+           ,[Firsment]
+           ,[farnotRebateminus]
+           ,[Serundminus]
+           ,[adricSchedsax]
+           ,[CODCommentCodes]
+           ,[PrevnotSequenceNum]
+           ,[Enrtsanta]
+           ,[ProgramCipCode]
+           ,[PaymDate])
+     VALUES
+           (437730
+           ,558335
+           ,0
+           ,NULL
+           ,1
+           ,'A'
+           ,getdate()
+           ,66
+           ,303.00
+           ,3.00
+           ,300.00
+           ,NULL
+           ,NULL
+           ,'2014-08-01T15:29:49.3119839639'
+           ,NULL
+           ,NULL
+           ,'A'
+           ,NULL
+           ,NULL,NULL,NULL,NULL,NULL
+           ,303.
+           ,3.00
+           ,300.00
+           ,NULL,NULL,NULL,NULL,NULL
+           ,1
+           ,'2014-08-04 07:20:44.000'
+           ,'2014-08-04 07:20:44.000'
+           ,NULL
+           ,0.00
+           ,NULL
+           ,0
+           ,NULL
+           ,NULL
+           ,NULL
+           ,1
+           ,'F'
+           ,NULL
+           ,NULL)
+GO
+
+
