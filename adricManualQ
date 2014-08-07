@@ -1,0 +1,112 @@
+/*
+FileName:	adricManualQ.sql
+Copyright © 2014 by Campus Management Corp.  All rights reserved.
+Author	:	Adric Saxon
+Date	:	8/7/2014
+
+Purpose	:	Mass queue up award letters for students
+			
+History	:	Prior to mass queue, the following was done:
+
+--=============================================================================
+--1. Step One - identify the academic years / student letters we wanted to queue up
+--=============================================================================
+--===== Conditionally drop 
+     IF OBJECT_ID('dbo.adricQtest') IS NOT NULL 
+        DROP TABLE dbo.adricQtest
+		
+		select distinct aid.adricayid
+			,aid.adricrllid
+			,aid.adricsyid
+			,ad.[adricadid]
+			,aid.adricyear
+			,ad.adricyearid
+			,ay.StartDate
+		into adricQtest
+		from adricaidaid aid
+		inner join adricyear ad on ad.adricyearID = aid.adricyearID
+		inner join adricyear ay on ay.adricyearid = aid.adricyearid
+		where aid.adricyearID in
+		(
+			select adricyearid from adricyear where adricstatid in 
+				(
+					select adricskoolID from adricskool where systatusid in 
+					(
+						select adricstatID from adricstat where Category in ('A','T')
+					)
+				)
+			and adriccampusID in (8,9,11,12,15)	
+		)
+		and aid.adricfdsID = 5
+		and aid.adricyear in ('2013-14','2014-15')
+		and aid.[Status] <> 'C'
+		and ay.StartDate <= '2014-08-05'
+
+
+
+--=============================================================================
+--2.     I then setup a Tally table to make everything faster (I had originally planned to use dynamic query but ended up using this table as my temp...i've practiced this Tally
+--																table before and tried to implement it here)
+--=============================================================================
+    USE test     --test DB 
+    SET NOCOUNT ON --Supress the auto-display of rowcounts for appearance/speed
+
+DECLARE @StartTime DATETIME    --Timer to measure total duration
+    SET @StartTime = GETDATE() --Start the timer
+
+--=============================================================================
+--      Created and populated the Tally table
+--=============================================================================
+--===== Conditionally drop 
+     IF OBJECT_ID('dbo.Tally') IS NOT NULL 
+        DROP TABLE dbo.Tally
+
+--===== Create and populate the Tally table on the fly
+ SELECT TOP 1100 --only 1077 records in adricQtest, see header of this script for select that was used to populate [adricQtest] table
+        IDENTITY(INT,1,1) AS N
+        ,q.adricayid
+		,q.adricid
+		,q.adricid
+		,q.adricid
+		,q.adricyear
+		,q.adricyearid
+   INTO CampusVue_Live.dbo.Tally
+   FROM CampusVue_Live.dbo.adricQtest q
+   
+
+--===== Add a Primary Key to maximize performance
+  ALTER TABLE dbo.Tally
+    ADD CONSTRAINT PK_Tally_N 
+        PRIMARY KEY CLUSTERED (N) WITH FILLFACTOR = 100
+
+--===== Let the public use it
+  GRANT SELECT, REFERENCES ON dbo.Tally TO PUBLIC
+
+--===== Display the total duration
+ SELECT STR(DATEDIFF(ms,@StartTime,GETDATE())) + ' Milliseconds duration'
+
+*/
+--Finding the report I need
+--select * from sys.objects where name like '%fa%award%'
+
+--Verifying what I threw into Tally table
+--select * from tally
+
+--After taking all prior steps, I combine all the data I want into a string I can execute en masse to manually queue letters
+--I'll then take the returned results, copy/paste, enter into new window and execute 
+
+select 'exec sproc_FA_Queued_Award_Add ' 
+		+ CAST(0 as CHAR(1)) + ', ' 
+		+ CAST(adricAYID as varchar(8)) + ', '
+		+ ('''') + CAST(adricyear as varchar(7)) + ('''') + (', ')
+		+ '''acadyear:cst_test.rpt''' + (', ')
+		+ cast(2 as CHAR(1))
+from Tally
+
+--Verifying that I was successful
+--select * from queue where dateadded > getdate() -1
+
+--Getting rid of any mistakes in test
+--begin tran
+--delete from queue where queueid in (select queueid from queue where dateadded > getdate() -1)
+--commit
