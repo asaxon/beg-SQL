@@ -1,6 +1,6 @@
 declare @adricCount int
 set @adricCount = 1
-while @adricCount < 10
+while @adricCount <= 10
 
 	begin  --adric1
 	
