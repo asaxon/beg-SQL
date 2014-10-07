@@ -14,3 +14,5 @@ Files here:
 
 6) sproc_gatherAUTOMATEDinfo - (Created stored procedure to quickly gather and present VIP data for troubleshooting)
 
+7> sqlLoop - Loop using WHILE, printing 1-10
+
