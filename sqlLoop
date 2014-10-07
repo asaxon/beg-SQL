@@ -1,0 +1,14 @@
+declare @adricCount int
+set @adricCount = 1
+while @adricCount < 10
+
+	begin  --adric1
+	
+	print @adricCount
+	set @adricCount = @adricCount + 1
+	
+	end --adric1
+
+	print 'End of loop...fun fact: I wrote this while watching Higher Learning (1995)'
+
+
