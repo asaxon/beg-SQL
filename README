@@ -14,5 +14,7 @@ Files here:
 
 6) sproc_gatherAUTOMATEDinfo - (Created stored procedure to quickly gather and present VIP data for troubleshooting)
 
-7> sqlLoop - Loop using WHILE, printing 1-10
+7) sqlLoop - Loop using WHILE, printing 1-10
+
+8) adricBeginTry - Update statement using error catch, LEN & REPLACE functions, and UPDATE from JOIN statement
 
