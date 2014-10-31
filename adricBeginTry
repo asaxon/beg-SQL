@@ -1,0 +1,57 @@
+/*
+FileName:	INC606_Clean
+Copyright © 2014 by Campus Management Corp.  All rights reserved.
+Author	:	Adric Saxon
+Date	:	10/31/2014
+PBI 	:	
+Purpose	:	Data cleanup for and issue, replaced extra spaces with REPLACE function into a temp table,
+          then updated back onto original table using PK.
+
+History	:	
+		
+
+*/	
+
+
+
+
+--select (Comment), * from origTable where systudentid in(272070,174100) and columnname = 'exampleColumn'
+--select * from INC#606_Clean
+
+begin try
+
+declare @enrollrowcount int = 0
+
+ 
+ --Backup of origTable table
+--select * into INC606_Bak from origTable
+
+--select origTableID,[comment]=replace(comment,'     ','') into INC606_Clean from origTable WHERE LEN(COMMENT) = 255 and dateadded < '2012-01-01'
+
+--while exists (select 'true' from INC606_Clean)
+
+begin transaction
+		--Print 'Before Update'
+		--select top 1000 origTableID,comment,len(comment) from origTable where origTableID in (select origTableID from INC606_Clean)
+update origTable
+set comment = [INC606_Clean].Comment
+from origTable (nolock)
+inner join [INC606_Clean] on [INC606_Clean].origTableID = origTable.origTableID
+		--Print 'After Update'
+		--select top 1000 origTableID,comment,len(comment) from origTable where origTableID in (select origTableID from INC606_Clean)
+
+commit transaction
+set @EnrollRowCount = @EnrollRowCount + @@rowcount
+
+		Print 'Update Successfull'
+			+ 'Updated ' + cast(@EnrollRowCount as varchar(10)) + ' Audit Record(s)'
+end try
+begin catch
+	if (@@trancount !=0) rollback transaction
+	declare @ErrorMessage nvarchar(4000);
+		declare @ErrorSeverity int;
+		declare @ErrorState int;								
+		select @ErrorMessage = error_message()
+        Print @ErrorMessage
+end catch
+
