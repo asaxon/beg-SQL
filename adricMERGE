@@ -1,0 +1,12 @@
+--Merge statement to sync destination from source
+MERGE tblAdricDestination AS Destination
+USING tblAdricSource AS Source
+ON Source.StudentID = Destination.StudentID
+WHEN MATCHED THEN
+UPDATE
+SET Destination.FirstName = Source.Firstname
+	Destination.LastName = Destination.StudentID
+	Destination.Course = Source.Course
+WHEN NOT MATCHED THEN
+INSERT (FirstName,LastName,Course)
+VALUES (Source.FirstName,Source.LastName,Source.Course);
