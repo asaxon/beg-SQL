@@ -20,7 +20,7 @@ f) CAST, CONVERT (details concerning appropriate datatype length, and nuances be
 g) CASE used specific with NULL values in studentppid, if not added it would NULL out the whole string I was trying to build
 
 			
-History	:
+History	: 11/12/2014 - Added missing ticks and parenthese where marked
 		
 
 */	
@@ -107,13 +107,13 @@ Part F & G
 select cast(StipendID as varchar(10)) + ', ' + ' ''' 
 	+ convert(varchar(20),Sched, 20) + '''' + ', '
 	+ cast(Amount as varchar(10)) + ', ' + ' '''
-	+ 'P' + ' ''' + ' ,' + ' ''' --Added missing tick marks
+	+ 'P' + ' ''' + ' ,' + ' ''' --Added missing tick marks 11/12/2014
 	+ convert (varchar(20),DAdded, 20)+ '''' + ', ' + ' '''
 	+ convert (varchar(20),DLstMod, 20) + ' ''' + ' ,'
 	+ cast(UID as varchar(10)) + ' ,'
 	+ cast(tAidID as varchar(10)) + ' ,'
 	+ cast(TermID as varchar(10)) + ' ,' + ' '''
-	+ StipendAType +  + ' ''' + ' ,' + ' ''' --Added missing tick marks
+	+ StipendAType +  + ' ''' + ' ,' + ' ''' --Added missing tick marks 11/12/2014
 	+ RMethod +  + ' ''' + ' ,' + ' '''
 	+ rtrim(PayName) + ' ''' + ' ,'
 	+ cast(AUserID as varchar(5)) + ' ,'
@@ -122,7 +122,7 @@ select cast(StipendID as varchar(10)) + ', ' + ' '''
 		end
 		) + ' ,'
 	+ cast(DNum  as varchar(5))
-	+ ')' --Added missing parenthese
+	+ ')' --Added missing parenthese 11/12/2014
 from StipendSched 
 where stipendschedid in (
                           select StipendSchedID from stipendsched where StipendID in 
