@@ -122,6 +122,7 @@ select cast(StipendID as varchar(10)) + ', ' + ' '''
 		end
 		) + ' ,'
 	+ cast(DNum  as varchar(5))
+	+ ')' --Added missing parenthese
 from StipendSched 
 where stipendschedid in (
                           select StipendSchedID from stipendsched where StipendID in 
