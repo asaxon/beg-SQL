@@ -1,0 +1,135 @@
+/*
+FileName:	adricUnionSubQuery
+Author	:	Adric Saxon
+Date	:	11/12/2014
+PBI 	:	
+Purpose	:	Probably pre-historic way of doing this, but I had small # of students I need to insert records into a table with, and instead of punching in values one-by-one into insert DML statements, I wanted to format T-SQL to spit out insert statements for me.
+
+a) First built queries using the student numbers and/or names from a PDF file sent by client
+b) Added StudID & combined students first & last name into string as preliminary testing, using RTRIM to get rid of spaces
+c) Ultimate goal was to combine the 20 queries into a statement that I could use in subquery [ie. where StudID in (...) ]
+
+Once I verified the UNIONs worked, I proceeded:
+
+d) Find StipendID using StudIDs
+e) Find StipendSchedIDs using StipendIDs from StudIDs
+
+Then, I combined it all into the final query, formatting when needed to make into one string
+
+f) CAST, CONVERT (details concerning appropriate datatype length, and nuances between CAST & CONVERT not taken into account here)
+g) CASE used specific with NULL values in studentppid, if not added it would NULL out the whole string I was trying to build
+
+			
+History	:
+		
+
+*/	
+
+/*********
+
+Part A - C
+
+***********/
+
+/*
+Students on first campus
+
+*/
+
+/********************************
+
+Not efficient with the UNIONS, try to avoid with large data sets if anyone runs across this, just temp
+
+*********************************/
+--To do:
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/  from student where FirstName = 'test1' and LastName = 'test'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test2' and LastName = 'test'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test3' and LastName = 'test'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test4' and LastName = 'test'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test5' and LastName = 'test'
+union
+
+
+
+
+
+/*
+2. For students on second campus
+*/
+--To do:
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test6' and LastName = 'test'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test7' and LastName = 'test'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test8' and LastName = 'test' and StuNum = '1312683481'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where StuNum = '1108505572'--'test9, test',
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test10' and LastName = 'test' and StuNum = '1201537300'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test11' and LastName = 'test'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test12' and LastName = 'test'and StuNum = '1311677252'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test13' and LastName = 'test' and StuNum = '1312682954'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test14' and LastName = 'test'and StuNum = '1312685476'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test15' and LastName = 'test'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test16' and LastName = 'test'and StuNum = '1403709895'
+union
+select StudID/*, [stud]= '''' + rtrim(lastname) + ', ' + rtrim(firstname) + '''' + ','*/ from student where FirstName = 'test17' and LastName = 'test'and StuNum = '1403711480'
+
+/*********
+
+Part D & E
+
+***********/
+
+select StipendSchedID from stipendsched where StipendID in 
+								(
+									select StipendID from Stipend where StudID in (
+                                                                            --Stud Ids from UNION queries above
+																								                            )
+									)
+
+/*********
+
+Part F & G
+
+***********/
+
+select cast(StipendID as varchar(10)) + ', ' + ' ''' 
+	+ convert(varchar(20),Sched, 20) + '''' + ', '
+	+ cast(Amount as varchar(10)) + ', ' + ' '''
+	+ 'P' + ' ''' + ' ,'
+	+ convert (varchar(20),DAdded, 20)+ '''' + ', ' + ' '''
+	+ convert (varchar(20),DLstMod, 20) + ' ''' + ' ,'
+	+ cast(UID as varchar(10)) + ' ,'
+	+ cast(tAidID as varchar(10)) + ' ,'
+	+ cast(TermID as varchar(10)) + ' ,' + ' '''
+	+ StipendAType +  + ' ''' + ' ,'
+	+ RMethod +  + ' ''' + ' ,' + ' '''
+	+ rtrim(PayName) + ' ''' + ' ,'
+	+ cast(AUserID as varchar(5)) + ' ,'
+	+ (case when studentppid is null then 'NULL' 
+		else cast(studentppId as varchar(10))
+		end
+		) + ' ,'
+	+ cast(DNum  as varchar(5))
+from StipendSched 
+where stipendschedid in (
+                          select StipendSchedID from stipendsched where StipendID in 
+							            	(
+								              	select StipendID from Stipend where StudID in (
+                                                                            --Stud Ids from UNION queries above
+																								                                 )
+								              	)
+                          )
+and [Status] = 'V'--void
+
