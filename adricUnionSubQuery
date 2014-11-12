@@ -107,13 +107,13 @@ Part F & G
 select cast(StipendID as varchar(10)) + ', ' + ' ''' 
 	+ convert(varchar(20),Sched, 20) + '''' + ', '
 	+ cast(Amount as varchar(10)) + ', ' + ' '''
-	+ 'P' + ' ''' + ' ,'
+	+ 'P' + ' ''' + ' ,' + ' ''' --Added missing tick marks
 	+ convert (varchar(20),DAdded, 20)+ '''' + ', ' + ' '''
 	+ convert (varchar(20),DLstMod, 20) + ' ''' + ' ,'
 	+ cast(UID as varchar(10)) + ' ,'
 	+ cast(tAidID as varchar(10)) + ' ,'
 	+ cast(TermID as varchar(10)) + ' ,' + ' '''
-	+ StipendAType +  + ' ''' + ' ,'
+	+ StipendAType +  + ' ''' + ' ,' + ' ''' --Added missing tick marks
 	+ RMethod +  + ' ''' + ' ,' + ' '''
 	+ rtrim(PayName) + ' ''' + ' ,'
 	+ cast(AUserID as varchar(5)) + ' ,'
