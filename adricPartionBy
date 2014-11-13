@@ -16,7 +16,7 @@ from
 				,awardyear,transactionid order by fastudentpellid desc --FaStudentPell IDs are unique
 			) --as DupeNum 11/13/2014, I think it's easier to read by using [DupeNum] on line 13
 		from FaStudentPell (nolock)
-	) adric
+	) adric --table alias for table using ROW_NUMBER() data
 where DupeNum > 1
 and AwardYear in ('2013-14','2014-15')
 and SyStudentID != -1
