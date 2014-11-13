@@ -1,20 +1,20 @@
 
---Finding duplicate FaStudentPellIDs
---SyStudentIds should not have same AwardYear,SyStudentID, & TransactionID
+--Finding duplicate StudPellIDs
+--StudIds should not have same AwardYear,StudentID, & TransactionID
 Select [Issue]='Pell Dupes'
-	,adric.FaStudentPellId
-	,SyStudentID
+	,adric.StudPellId
+	,StudID
 	,DupeNum
 from
 	(
-		select fastudentpellid
-		,systudentid
+		select studpellid
+		,studid
 		,awardyear
-		,ROW_NUMBER () over
+		,[DupeNum]=ROW_NUMBER () over --11/13/2014 added instead of 'as DupeNum' on line 17
 			(
 				partition by systudentid
 				,awardyear,transactionid order by fastudentpellid desc --FaStudentPell IDs are unique
-			) as DupeNum
+			) --as DupeNum 11/13/2014, I think it's easier to read by using [DupeNum] on line 13
 		from FaStudentPell (nolock)
 	) adric
 where DupeNum > 1
