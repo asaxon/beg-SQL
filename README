@@ -1,33 +1,5 @@
-SQL - beg-SQL 
+*****************************************************
 
-Files here:
+See Wiki for short details of files here !!
 
-1) SQL Notepad                  - Chronological timeline of T-SQL Musings
-
-2) adricBeginTry                - Update statement using error catch, LEN & REPLACE functions, and UPDATE from JOIN statement
-
-3) adricInsertUsingGUI          - SSMS GUI INTO script
-
-4) adricLatestEnroll            - Select statement using MAX,CASE
-
-5) adricMERGE                   - Merge statement to sync destination from source (update when MATCHED, insert when not)
-
-6) adricManualQ                 - Mass queue up letters for students (user define TALLY table)
-
-7) adricPartitionBy             - Practicing ROW_NUMBER() over Partion By
-
-8) adricUnionSubQuery           - Format T-SQL to spit out insert statements for me
-
-9) adricUnionSubQuery_2         - Wrap insert statements with error checks, ie: ERROR_NUMBER(), ERROR_MESSAGE(), RAISERROR
-
-10) adricUpdateErrorCatch       - T-SQL batch returns results when bit = 0, commits change when bit = 1, error catching
-
-11) complexUpdatev1             - Update statement using BEGIN TRY,CATCH, OBJECT_ID,DROP Temp TABLE, Variable @Bit to test
-
-12) simpleDlrUpPrvntMistakes    - Prevent DML mistake: SELECT shows before/after change, rollsback data, needs manual COMMIT
-
-13) sproc_gatherAUTOMATEDinfo   - User created sproc gathers and presents VIP FAA info quickly for analyst troubleshooting
-
-14) sqlLoop                     - Loop using WHILE, printing 1-10
-
-
+*****************************************************
