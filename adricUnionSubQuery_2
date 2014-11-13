@@ -1,0 +1,51 @@
+--This worked OK, but I did have to COMMIT again...thinking it may have been my lbexit tag 
+
+SET NOCOUNT ON; 
+DECLARE @TRANCOUNT INT; 
+SET @TRANCOUNT = @@TRANCOUNT; 
+BEGIN TRY 
+IF @TRANCOUNT = 0 
+BEGIN TRANSACTION 
+ELSE 
+SAVE TRANSACTION [INC482_clean] 
+
+BEGIN TRAN 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (60133, '2014-09-03 00:00:00', 2547.00, 'P ' , '2014-05-19 12:36:58', '2014-09-29 10:15:42 ' ,3941 ,594698 ,225 , 'U ' , 'C ' , 'test1, test ' ,2553 ,NULL ,1) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (62465, '2014-09-03 00:00:00', 17.07, 'P ' , '2014-09-02 13:46:45', '2014-09-29 10:16:26 ' ,3941 ,608648 ,237 , 'U ' , 'C ' , 'test2, test ' ,3341 ,NULL ,1) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (59788, '2014-09-03 00:00:00', 1015.00, 'P ' , '2014-08-19 18:14:03', '2014-09-29 10:17:09 ' ,3941 ,609436 ,259 , 'U ' , 'C ' , 'test3, test J. ' ,3341 ,NULL ,3) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (62169, '2014-09-03 00:00:00', 1890.00, 'P ' , '2014-08-20 10:13:11', '2014-09-29 10:29:57 ' ,3941 ,630353 ,225 , 'U ' , 'C ' , 'test4, test ' ,2553 ,NULL ,1) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (59918, '2014-07-21 00:00:00', 217.00, 'P ' , '2014-05-08 17:15:47', '2014-08-12 11:20:53 ' ,3941 ,608900 ,285 , 'U ' , 'C ' , 'test5, test ' ,1861 ,NULL ,4) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (59918, '2014-09-01 00:00:00', 345.00, 'P ' , '2014-05-08 17:15:47', '2014-09-29 10:11:47 ' ,3941 ,608900 ,285 , 'U ' , 'C ' , 'test6, test ' ,1861 ,NULL ,7) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (62382, '2014-09-01 00:00:00', 36.00, 'P ' , '2014-08-27 15:37:08', '2014-09-29 10:06:10 ' ,3941 ,590486 ,183 , 'U ' , 'C ' , 'test7, test ' ,2757 ,NULL ,1) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (61470, '2014-09-03 00:00:00', 3156.00, 'P ' , '2014-07-17 09:49:25', '2014-09-29 10:32:20 ' ,3941 ,598370 ,370 , 'U ' , 'C ' , 'test8, test ' ,2553 ,126855 ,1) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (58153, '2014-09-03 00:00:00', 600.00, 'P ' , '2014-08-14 16:24:18', '2014-09-29 10:38:12 ' ,3941 ,597272 ,392 , 'U ' , 'C ' , 'test9 , test ' ,3341 ,126169 ,4) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (60244, '2014-09-03 00:00:00', 3155.50, 'P ' , '2014-05-22 19:10:29', '2014-09-29 10:43:26 ' ,3941 ,613494 ,370 , 'U ' , 'C ' , 'test10, test ' ,3341 ,126075 ,1) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (58676, '2014-09-03 00:00:00', 2822.00, 'P ' , '2014-09-02 12:48:06', '2014-09-29 10:44:27 ' ,3941 ,596482 ,366 , 'U ' , 'C ' , 'test11, test ' ,3341 ,126073 ,2) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (62288, '2014-09-03 00:00:00', 43.00, 'P ' , '2014-08-25 14:37:05', '2014-09-29 10:48:46 ' ,3941 ,594498 ,370 , 'U ' , 'C ' , 'test12, test ' ,2944 ,126077 ,1) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (58182, '2014-09-01 00:00:00', 1699.46, 'P ' , '2014-08-12 11:49:22', '2014-09-29 10:07:04 ' ,3941 ,627736 ,183 , 'U ' , 'C ' , 'test13, test ' ,1861 ,126359 ,2) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (58182, '2014-10-20 00:00:00', 1979.00, 'P ' , '2014-10-15 14:56:02', '2014-10-28 13:39:08 ' ,790 ,638484 ,183 , 'U ' , 'C ' , 'test13, test ' ,1861 ,126359 ,5) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (58182, '2014-10-20 00:00:00', 1979.00, 'P ' , '2014-10-15 14:56:02', '2014-10-28 13:39:09 ' ,790 ,644131 ,183 , 'U ' , 'C ' , 'test13, test ' ,1861 ,126359 ,6) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (59358, '2014-09-02 00:00:00', 517.40, 'P ' , '2014-09-02 12:13:43', '2014-09-29 10:11:03 ' ,3941 ,604155 ,183 , 'U ' , 'C ' , 'test14, test ' ,1861 ,129246 ,3) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (60344, '2014-09-01 00:00:00', 1732.00, 'P ' , '2014-05-29 10:41:44', '2014-09-29 10:05:27 ' ,3941 ,601315 ,183 , 'U ' , 'C ' , 'test15 , test ' ,1861 ,130258 ,2) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (60684, '2014-09-03 00:00:00', 655.00, 'P ' , '2014-06-11 14:44:48', '2014-09-29 10:49:56 ' ,3941 ,617302 ,280 , 'U ' , 'C ' , 'test16 , test ' ,3341 ,133274 ,1) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (59645, '2014-09-03 00:00:00', 3812.00, 'P ' , '2014-04-23 09:28:22', '2014-09-29 10:51:07 ' ,3941 ,607810 ,280 , 'U ' , 'C ' , 'test17, test ' ,2553 ,132344 ,1) 
+Insert INTO StipendSched (StipendID,DateSched,Amount,Status,DateAdded,DateLstMod,UserID,StudAidID,TermID,StipendAddrType,RetMet,PayName,AUserID,StudAPayPID,DNum) VALUES (60685, '2014-09-03 00:00:00', 275.00, 'P ' , '2014-06-11 14:59:40', '2014-09-29 10:51:47 ' ,3941 ,617310 ,280 , 'U ' , 'C ' , 'test18 , test ' ,3341 ,132679 ,1) 
+
+lbexit: --Labeling for jump to if error occurs, which in this case, won't execute COMMIT below 
+
+IF @trancount = 0 
+commit; 
+
+END try 
+BEGIN CATCH 
+DECLARE @error int, @message varchar(4000), @xstate int 
+SELECT @error = ERROR_NUMBER(), @message = ERROR_MESSAGE(), @xstate = XACT_STATE() 
+IF @xstate = -1 
+rollback; 
+IF @xstate = 1 and @trancount = 0 
+rollback 
+IF @xstate = 1 and @trancount > 0 
+rollback transaction [INC482_clean]; 
+
+RAISERROR ('[INC482_clean]: %d: %s', 16, 1, @error, @message); 
+END CATCH 
