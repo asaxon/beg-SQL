@@ -12,6 +12,7 @@ History	:
 Example use:
 
 --exec sproc_gatherAUTOMATEDinfo 'FA'
+--exec sproc_gatherAUTOMATEDinfo @Module, @Descrip
 
 
 --Syntax
