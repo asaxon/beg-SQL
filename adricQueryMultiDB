@@ -1,0 +1,21 @@
+/*
+
+Query from multiple DB on same server
+----------------------------------------
+
+A. Reference each piece with the 3 or 4 part name:
+
+ 
+
+	Database.Schema.Table when referencing tables
+
+		and
+
+	Database.Schema.Table.Column when referencing columns
+*/
+
+select 
+		name
+		[schema]
+		,*
+from sys.databases
