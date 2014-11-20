@@ -28,13 +28,25 @@ select
 		,LEN(DB.name)
 		
 from sys.databases DB
-where name not in ('master','tempdb','model','msdb') 
-and name not like '%portal%' 
+where name not in ('master','tempdb','model','msdb','testdb','dynamics','two') 
+and owner_sid = 0x01
+and name not like '%portal%'
+and name not like '%DNC%'
 and name not like '%report%' 
+and name not like '%newhire%'
+and name not like '%fbuilder%'
+and name not like '%DBA%'
+and name not like '%SupVS%'
 --Excluding really long auto-generated databases, IE: 
 --PerformancePoint Service	Application_28e5ef2f8556415984a8d0210ce245a3
 --These also seem to have [blanks] in them, which messes query up too
+--**Can use [] to protect against blanks in future
 and LEN(DB.name) < 50
+
+
+
+
+
 
 
 
