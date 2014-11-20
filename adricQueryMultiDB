@@ -20,9 +20,8 @@ select
 		,[Database.Schema.Table.Column]=DB.name + '.' 
 		+ (select top 1 table_schema from Information_schema.tables) + '.SyVersionInfo' + '.' + 'SyVersionInfoId'
 		,[Built Query]='SELECT SY.VersionName,SY.* from ' + DB.name + '.' 
-		+ (select top 1 table_schema from Information_schema.tables) + '.SyVersionInfo SY where SY.SyVersionInfoID in ' 
-		+ '(select max(SY1.SyVersionInfoId) from ' + DB.name + '.' 
-		+ (select top 1 table_schema from Information_schema.tables) + '.SyVersionInfo SY1'+ ') '
+		+ (select top 1 table_schema from Information_schema.tables)
+		+ '.SyVersionInfo SY where SY.Component LIKE ''Database_View%'''
 		+ 'Union'
 		,*
 		,LEN(DB.name)
